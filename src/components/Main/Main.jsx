@@ -8,6 +8,7 @@ import withReactContent from 'sweetalert2-react-content'
 import { useAuth } from '../../hooks/auth-hook'
 import { Toast } from '../../Toastr/Toastr'
 import { AddForm } from '../contacts/add'
+import { EditForm } from '../contacts/edit'
 
 const MySwal = withReactContent(Swal)
 
@@ -31,21 +32,19 @@ export const Main = () => {
     dispatch({ type: 'ADD_USER', user: values })
     MySwal.close()
 
-    const Toast = Swal.mixin({
-      toast: true,
-      position: 'top-end',
-      showConfirmButton: false,
-      timer: 3000,
-      timerProgressBar: true,
-      didOpen: toast => {
-        toast.addEventListener('mouseenter', Swal.stopTimer)
-        toast.addEventListener('mouseleave', Swal.resumeTimer)
-      }
-    })
-
     Toast.fire({
       icon: 'success',
       title: 'Contact added successfully'
+    })
+  }
+
+  const EditHandler = (values, id) => {
+    dispatch({ type: 'EDIT_USER', user: { id, ...values } })
+    MySwal.close()
+
+    Toast.fire({
+      icon: 'success',
+      title: 'Contact edited successfully'
     })
   }
 
@@ -53,6 +52,14 @@ export const Main = () => {
     MySwal.fire({
       title: 'Add new contact',
       html: <AddForm onSave={AddHandler} />,
+      showConfirmButton: false
+    })
+  }
+
+  const handleEditBtn = user => {
+    MySwal.fire({
+      title: 'Edit contact',
+      html: <EditForm onSave={EditHandler} user={user} />,
       showConfirmButton: false
     })
   }
@@ -130,7 +137,7 @@ export const Main = () => {
                 <td>{user.name}</td>
                 <td>{user.phone}</td>
                 <td className="action-buttons">
-                  <button>Edit</button>
+                  <button onClick={() => handleEditBtn(user)}>Edit</button>
                   <button
                     onClick={() =>
                       dispatch({ type: 'REMOVE_USER', id: user.id })
