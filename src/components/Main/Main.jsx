@@ -38,8 +38,8 @@ export const Main = () => {
     })
   }
 
-  const EditHandler = (values, id) => {
-    dispatch({ type: 'EDIT_USER', user: { id, ...values } })
+  const EditHandler = values => {
+    dispatch({ type: 'EDIT_USER', user: values })
     MySwal.close()
 
     Toast.fire({
@@ -129,7 +129,7 @@ export const Main = () => {
               <th>ID</th>
               <th>Name</th>
               <th>Phone</th>
-              <th>Actions</th>
+              <th className="actions">Actions</th>
             </tr>
           </thead>
           <tbody>

@@ -3,22 +3,38 @@ import FormInput from '../FormInput'
 
 export const EditForm = ({ onSave, user }) => {
   const [values, setValues] = useState({
-    name: user.name,
-    phone: user.phone
+    name: { value: user.name, pattern: '^[A-Za-z0-9]{3,16}$' },
+    phone: { value: user.phone, pattern: '^[0-9]{9}$' }
   })
 
   const onChange = e => {
-    setValues({ ...values, [e.target.name]: e.target.value })
+    setValues({
+      ...values,
+      [e.target.name]: { ...values[e.target.name], value: e.target.value }
+    })
   }
 
   const handleSubmit = e => {
     e.preventDefault()
 
-    onSave(values, user.id)
+    let isValid = true
+
+    for (let val in values) {
+      let re = new RegExp(values[val].pattern)
+      if (!re.test(values[val].value)) {
+        isValid = false
+      }
+    }
+
+    if (!isValid) {
+      return
+    }
+
+    onSave({ name: values.name.value, phone: values.phone.value, id: user.id })
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate>
+    <form className="contact-form" onSubmit={handleSubmit} noValidate>
       <div>
         <FormInput
           name="name"
@@ -28,7 +44,7 @@ export const EditForm = ({ onSave, user }) => {
           label="Name"
           pattern="^[A-Za-z0-9]{3,16}$"
           required
-          value={values.name}
+          value={values.name.value}
           onChange={onChange}
         />
       </div>
@@ -41,7 +57,7 @@ export const EditForm = ({ onSave, user }) => {
           label="Phone"
           pattern="^[0-9]{9}$"
           required
-          value={values.phone}
+          value={values.phone.value}
           onChange={onChange}
         />
       </div>

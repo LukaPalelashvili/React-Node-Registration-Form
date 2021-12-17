@@ -49,7 +49,7 @@ export const RegistrationForm = () => {
       type: 'password',
       placeholder: 'Password',
       errorMessage:
-        'Password should be 8-20 characters and include at least 1 letter, 1 number and 1 special character!',
+        'Password should be 6-20 characters and include at least 1 letter, 1 number and 1 special character!',
       label: 'Password',
       pattern: `^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,20}$`,
       required: true
