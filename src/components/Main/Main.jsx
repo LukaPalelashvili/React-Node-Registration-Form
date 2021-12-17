@@ -119,7 +119,9 @@ export const Main = () => {
           <button className="add-button" onClick={handleAddBtn}>
             Add New
           </button>
-          <button onClick={logout}>Log out</button>
+          <button className="logout-button" onClick={logout}>
+            Log out
+          </button>
         </div>
         <table>
           <thead>

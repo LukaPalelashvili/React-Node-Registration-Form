@@ -32,6 +32,10 @@ button {
   cursor: pointer;
   margin-top: 15px;
   margin-bottom: 30px;
+
+  &:hover {
+    background-color: #25003e;
+  }
 }
 
 .container {
@@ -76,6 +80,16 @@ button {
     .add-button {
       width: 15%;
       margin-right: 10px;
+    }
+
+    .logout-button {
+      width: 15%;
+      margin-right: 10px;
+    }
+
+    input {
+      margin-top: 0;
+      flex: 0 0 auto;
     }
   }
 }
