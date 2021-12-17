@@ -15,10 +15,9 @@ const createCall = async (req, res) => {
   try {
     existingUser = await User.findById(userId)
   } catch (err) {
-    console.log(err)
     return res.status(500).json({
       status: 500,
-      message: 'Internal server error2'
+      message: 'Internal server error'
     })
   }
 
@@ -39,7 +38,6 @@ const createCall = async (req, res) => {
   try {
     await createdCall.save()
   } catch (err) {
-    console.log(err)
     return res.status(500).json({
       status: 500,
       message: 'Internal server error'
@@ -47,7 +45,6 @@ const createCall = async (req, res) => {
   }
 
   res.json({
-    ...createdCall,
     message: 'Call created successfully'
   })
 }

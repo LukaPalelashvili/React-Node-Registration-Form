@@ -6,7 +6,6 @@ const User = require('../models/user')
 
 const signup = async (req, res, next) => {
   const errors = validationResult(req)
-  console.log(errors)
   if (!errors.isEmpty()) {
     res.json({
       status: 400,

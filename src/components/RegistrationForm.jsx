@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import Swal from 'sweetalert2'
 import FormInput from '../components/FormInput'
 import withReactContent from 'sweetalert2-react-content'
+import { API_URL } from '../consts'
 import { Toast } from '../Toastr/Toastr'
 
 const MySwal = withReactContent(Swal)
@@ -72,7 +73,7 @@ export const RegistrationForm = () => {
 
     for (let val in values) {
       let re = new RegExp(values[val].pattern)
-      console.log(re.test(values[val].value) + ' ' + values[val].value)
+
       if (!re.test(values[val].value)) {
         isValid = false
       }
@@ -88,7 +89,7 @@ export const RegistrationForm = () => {
     }
 
     axios
-      .post('http://localhost:4000/api/users/signup', {
+      .post(`${API_URL}users/signup`, {
         username: values.username.value,
         password: values.password.value,
         passwordConfirmation: values.passwordConfirmation.value

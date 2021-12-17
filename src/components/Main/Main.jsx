@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import Swal from 'sweetalert2'
 
 import withReactContent from 'sweetalert2-react-content'
+import { API_URL } from '../../consts'
 import { useAuth } from '../../hooks/auth-hook'
 import { Toast } from '../../Toastr/Toastr'
 import { AddForm } from '../contacts/add'
@@ -85,7 +86,7 @@ export const Main = () => {
     }
 
     axios
-      .post('http://localhost:4000/api/call/new', {
+      .post(`${API_URL}call/new`, {
         id: user.id,
         name: user.name,
         phone: user.phone,
