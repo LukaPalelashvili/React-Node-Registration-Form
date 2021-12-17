@@ -3,11 +3,8 @@ import { RegistrationForm } from './components/RegistrationForm'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { Login } from './components/login/Login'
 import { Main } from './components/Main/Main'
-import { useAuth } from './hooks/auth-hook'
 
 function App() {
-  const { token } = useAuth()
-
   return (
     <BrowserRouter>
       <Routes>

@@ -1,19 +1,34 @@
 import axios from 'axios'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Swal from 'sweetalert2'
 import FormInput from '../components/FormInput'
 import withReactContent from 'sweetalert2-react-content'
+import { Toast } from '../Toastr/Toastr'
 
 const MySwal = withReactContent(Swal)
 
 export const RegistrationForm = () => {
   let navigate = useNavigate()
+  const token = JSON.parse(localStorage.getItem('userData'))?.token
+  useEffect(() => {
+    if (token) {
+      navigate('/main')
+    }
+  }, [token, navigate])
 
   const [values, setValues] = useState({
-    username: '',
-    password: '',
-    confirmPassword: ''
+    username: { value: '', pattern: '^[A-Za-z0-9]{3,16}$', isValid: false },
+    password: {
+      value: '',
+      pattern:
+        '^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,20}$'
+    },
+    passwordConfirmation: {
+      value: '',
+      pattern:
+        '^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,20}$'
+    }
   })
 
   const inputs = [
@@ -45,26 +60,46 @@ export const RegistrationForm = () => {
       type: 'password',
       placeholder: 'Confirm Password',
       errorMessage: "Passwords don't match!",
+      pattern: values.password.value,
       label: 'Confirm Password',
-      pattern: values.password,
       required: true
     }
   ]
 
   const handleSubmit = e => {
     e.preventDefault()
+    let isValid = true
+
+    for (let val in values) {
+      let re = new RegExp(values[val].pattern)
+      console.log(re.test(values[val].value) + ' ' + values[val].value)
+      if (!re.test(values[val].value)) {
+        isValid = false
+      }
+    }
+
+    if (!isValid) {
+      MySwal.fire({
+        title: 'Oops...',
+        text: 'Please fill in all the fields correctly!',
+        icon: 'error'
+      })
+      return
+    }
 
     axios
-      .post('http://localhost:4000/api/users/signup', values)
+      .post('http://localhost:4000/api/users/signup', {
+        username: values.username.value,
+        password: values.password.value,
+        passwordConfirmation: values.passwordConfirmation.value
+      })
       .then(res => {
         if (res.status === 201) {
-          MySwal.fire({
-            title: 'Success!',
-            text: 'Do you want to continue',
+          navigate('/login')
+
+          Toast.fire({
             icon: 'success',
-            confirmButtonText: 'Cool'
-          }).then(r => {
-            navigate('/login')
+            title: 'You signed up successfully!, please login!'
           })
         }
       })
@@ -74,7 +109,10 @@ export const RegistrationForm = () => {
   }
 
   const onChange = e => {
-    setValues({ ...values, [e.target.name]: e.target.value })
+    setValues({
+      ...values,
+      [e.target.name]: { ...values[e.target.name], value: e.target.value }
+    })
   }
 
   return (
@@ -85,7 +123,7 @@ export const RegistrationForm = () => {
           <FormInput
             key={input.id}
             {...input}
-            value={values[input.name]}
+            value={values[input.name]?.value}
             onChange={onChange}
           />
         ))}

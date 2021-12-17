@@ -4,7 +4,9 @@ import { users } from '../data/users'
 const usersReducer = (state = { users }, action) => {
   switch (action.type) {
     case 'ADD_USER':
-      return { users: [...state.users, action.user] }
+      return {
+        users: [...state.users, { ...action.user, id: state.users.length + 1 }]
+      }
     case 'EDIT_USER':
       return {
         users: state.users.map(user =>

@@ -1,28 +1,63 @@
 import axios from 'axios'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import Swal from 'sweetalert2'
 
 import withReactContent from 'sweetalert2-react-content'
+import { useAuth } from '../../hooks/auth-hook'
+import { Toast } from '../../Toastr/Toastr'
 import { AddForm } from '../contacts/add'
 
 const MySwal = withReactContent(Swal)
 
 export const Main = () => {
+  const navigate = useNavigate()
+  const { userId, logout } = useAuth()
+
+  const token = JSON.parse(localStorage.getItem('userData'))?.token
+
+  useEffect(() => {
+    if (!token) {
+      navigate('/login')
+    }
+  }, [navigate, token])
+
   const { users } = useSelector(state => state)
   const dispatch = useDispatch()
   const [searchQuery, setSearchQuery] = useState('')
 
+  const AddHandler = values => {
+    dispatch({ type: 'ADD_USER', user: values })
+    MySwal.close()
+
+    const Toast = Swal.mixin({
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+      didOpen: toast => {
+        toast.addEventListener('mouseenter', Swal.stopTimer)
+        toast.addEventListener('mouseleave', Swal.resumeTimer)
+      }
+    })
+
+    Toast.fire({
+      icon: 'success',
+      title: 'Contact added successfully'
+    })
+  }
+
   const handleAddBtn = () => {
     MySwal.fire({
       title: 'Add new contact',
-      html: <AddForm />,
+      html: <AddForm onSave={AddHandler} />,
       showConfirmButton: false
     })
   }
 
   const handelSearchQueryChange = e => {
-    console.log(e.target.value)
     setSearchQuery(e.target.value)
     dispatch({
       type: 'FILTER_USERS',
@@ -34,7 +69,12 @@ export const Main = () => {
     const user = users.find(user => user.id === id)
 
     if (!user) {
-      alert('User not found')
+      MySwal.fire({
+        title: 'Oops...',
+        text: 'User not found',
+        icon: 'error'
+      })
+      return
     }
 
     axios
@@ -42,10 +82,21 @@ export const Main = () => {
         id: user.id,
         name: user.name,
         phone: user.phone,
-        username: 'CyberX6f6'
+        userId
       })
-      .then(r => console.log(r))
-      .catch(e => console.log(e))
+      .then(r => {
+        Toast.fire({
+          icon: 'success',
+          title: 'Call saved successfully'
+        })
+      })
+      .catch(e => {
+        MySwal.fire({
+          title: 'Oops...',
+          text: 'Error occurred, please try again',
+          icon: 'error'
+        })
+      })
   }
 
   return (
@@ -61,6 +112,7 @@ export const Main = () => {
           <button className="add-button" onClick={handleAddBtn}>
             Add New
           </button>
+          <button onClick={logout}>Log out</button>
         </div>
         <table>
           <thead>

@@ -5,7 +5,7 @@ const Schema = mongoose.Schema
 const callSchema = new Schema({
   name: { type: String, required: true },
   phone: { type: Number, required: true },
-  username: { type: String, required: true },
+  username: { type: String, required: false },
   date: { type: Date, required: true }
 })
 

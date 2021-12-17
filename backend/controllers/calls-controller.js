@@ -8,20 +8,21 @@ const createCall = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() })
   }
-  const { name, phone, username } = req.body
+  const { name, phone, userId } = req.body
 
-  let existingUsername
+  let existingUser
 
   try {
-    existingUsername = await User.findOne({ username })
+    existingUser = await User.findById(userId)
   } catch (err) {
+    console.log(err)
     return res.status(500).json({
       status: 500,
-      message: 'Internal server error'
+      message: 'Internal server error2'
     })
   }
 
-  if (!existingUsername) {
+  if (!existingUser) {
     res.status(403).json({
       status: 403,
       message: 'Username is invalid'
@@ -31,7 +32,7 @@ const createCall = async (req, res) => {
   const createdCall = new Call({
     name,
     phone,
-    username,
+    userId: existingUser.username,
     date: new Date()
   })
 

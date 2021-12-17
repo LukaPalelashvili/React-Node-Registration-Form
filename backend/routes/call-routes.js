@@ -18,10 +18,7 @@ router.post(
       .isEmpty()
       .isNumeric()
       .withMessage('Phone number must numeric'),
-    body('username')
-      .not()
-      .isEmpty()
-      .withMessage('Username must be alphanumeric')
+    body('userId').not().isEmpty().withMessage('UserId must not be empty')
   ],
   callsController.createCall
 )
